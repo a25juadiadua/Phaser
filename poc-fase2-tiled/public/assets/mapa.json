@@ -1,0 +1,21 @@
+// Fragment que genera Tiled dins public/assets/mapa.json
+{
+  "width": 20, "height": 15, "tilewidth": 32, "tileheight": 32,
+  "tilesets": [{ "name": "tileset_tiled", "firstgid": 1 }],
+  "layers": [
+    { "name": "Terra",  "type": "tilelayer", "data": [1, 1, 2, ...] },
+    { "name": "Parets", "type": "tilelayer", "data": [5, 5, 0, ...] },
+    {
+      "name": "Objectes", "type": "objectgroup",
+      "objects": [
+        { "x": 96, "y": 128, "width": 32, "height": 32,
+          "properties": [{ "name": "tipus", "value": "spawn" }] },
+        { "x": 320, "y": 96, "width": 192, "height": 160,
+          "properties": [
+            { "name": "tipus", "value": "zona" },
+            { "name": "nomSala", "value": "Sala de Reunions" }
+          ] }
+      ]
+    }
+  ]
+}
