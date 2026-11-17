@@ -8,6 +8,8 @@ const nom = ref('Anna');
 // Booleà per muntar/desmuntar el joc i verificar onMounted / onUnmounted
 const mostrarJoc = ref(true);
 
+const pausado = ref(false);
+
 const colorAvatar = ref('#10b981');
 const estat = ref('Disponible');
 
@@ -25,16 +27,24 @@ const estat = ref('Disponible');
       <input type="color" v-model="colorAvatar">
 
       <select v-model="estat">
-        <option >Disponible</option>
-        <option >Ocupado</option>
-        <option >Absente</option>
+        <option value="Disponible">Disponible</option>
+        <option value="Ocupat">Ocupat</option>
+        <option value="Absent">Absent</option>
       </select>
 
-  
+      <button @click="pausado = !pausado">
+  {{ pausado ? 'Reprèn' : 'Pausa' }}
+</button>
     </div>
 
     <!-- Passem 'nom' cap avall amb :nomUsuari i controlem el cicle amb v-if -->
-    <PhaserCanvas v-if="mostrarJoc" :nomUsuari="nom" :color="colorAvatar" />
+    <PhaserCanvas
+    v-if="mostrarJoc"
+    :nomUsuari="nom"
+    :color="colorAvatar"
+    :estat="estat"
+    :pausado="pausado"
+    />
 
     
 

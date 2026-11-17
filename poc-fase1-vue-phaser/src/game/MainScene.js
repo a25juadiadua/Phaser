@@ -8,12 +8,17 @@
       this.etiqueta = this.add.text(320, 160, 'Anna', {
         fontSize: '18px', fontFamily: 'sans-serif', color: '#ffffff'
       }).setOrigin(0.5);
-      this.estat =
+      this.textEstat = this.add.text(320, 180, 'Disponible', {
+        fontSize: '14px',
+        fontFamily: 'sans-serif',
+        color: '#10b981'
+      }).setOrigin(0.5);
     }
   
     update(time) { // ... codi existent del moviment a 60 FPS ...
       this.avatar.y = 200 + Math.sin(time * 0.004) * 8;
-      this.etiqueta.setPosition(this.avatar.x, this.avatar.y - 38);
+      this.etiqueta.setPosition(this.avatar.x, this.avatar.y - 58);
+      this.textEstat.setPosition(this.avatar.x, this.avatar.y - 35);
     }
   
    // [NOU] Afegeix aquest mètode DINS de class MainScene (abans de tancar })
@@ -28,5 +33,9 @@
             Phaser.Display.Color.HexStringToColor(nouColor).color
         );
     }
+}
+
+actualitzarEstat(nouEstat) {
+  this.textEstat?.setText(nouEstat);
 }
   }
