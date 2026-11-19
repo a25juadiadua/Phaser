@@ -17,13 +17,23 @@ export class OfficeScene extends Phaser.Scene {
     map.createLayer('Mobles', tileset, 0, 0); // EXTRA: dibuixa els mobles (entre Terra i Parets)
     this.capaParets = map.createLayer('Parets', tileset, 0, 0);
     this.capaParets?.setCollisionByProperty({ collides: true });
+    this.teclaShift = this.input.keyboard.addKey('SHIFT');
 
     // Llegim la capa 'Objectes' per trobar el spawn i dibuixar les zones
     this.zones = [];
+    this.monitors = [];
     map.getObjectLayer('Objectes')?.objects.forEach((obj) => {
       const props = this.obtenirPropietats(obj);
       const cx = obj.x + (obj.width || 0) / 2, cy = obj.y + (obj.height || 0) / 2;
 
+
+      if(props.tipus === 'monitor'){
+        this.monitors.push({
+          titol: props.titol || 'Monitor',
+          x: cx,
+          y: cy
+        });
+      }
       if (props.tipus === 'spawn') {
         this.jugador = this.physics.add.sprite(cx, cy, 'george', 0); // Frame 0 = quiet mirant avall
         // [NOU] Hitbox petit als peus (16x12 px) desplaçat (16, 32) dins del frame 48x48
@@ -83,7 +93,16 @@ export class OfficeScene extends Phaser.Scene {
     if (this.cursors.down.isDown || this.teclesWASD.S.isDown)  vy =  1;
 
     // Normalitzem perquè caminar en diagonal no sigui un 41% més ràpid
-    const vel = new Phaser.Math.Vector2(vx, vy).normalize().scale(160);
+    const sprint = this.teclaShift.isDown;
+
+    // Aceleramos la animación
+    this.jugador.anims.timeScale = sprint ? 1.6 : 1.0;
+
+    // Cambiamos la velocidad
+    const velocitat = sprint ? 260 : 160;
+    const vel = new Phaser.Math.Vector2(vx, vy).normalize().scale(velocitat);
+
+    // Aplicamos el movimiento
     this.jugador.setVelocity(vel.x, vel.y);
 
     // Triem l'animació segons cap on camina; si s'atura, deixem l'última mirada
@@ -97,6 +116,7 @@ export class OfficeScene extends Phaser.Scene {
     }
     this.etiqueta.setPosition(this.jugador.x, this.jugador.y - 30);
     this.comprovarZones(); // [NOU] Al final d'update()
+    this.comprovarMonitors();
   }
 
   // [NOU] Al final de update(): comprovem si els peus d'en George són dins d'alguna zona
@@ -112,4 +132,17 @@ export class OfficeScene extends Phaser.Scene {
   obtenirPropietats(obj) {
     const res = {}; (obj.properties || []).forEach((p) => { res[p.name] = p.value; }); return res;
   }
+
+  comprovarMonitors() {
+  const monitor = this.monitors.find((mon) =>
+    Phaser.Math.Distance.Between(
+      this.jugador.x,
+      this.jugador.y,
+      mon.x,
+      mon.y
+    ) < 40
+  );
+
+  this.game.events.emit('a-prop-monitor', monitor ? monitor.titol : null);
+}
 }
